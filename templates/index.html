@@ -64,8 +64,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--yl);outline-off
 <button id="hamburger" title="Toggle Sidebar" aria-label="Toggle Sidebar">☰</button>
 <b style="color:var(--cy);letter-spacing:2px">ASTRABIO</b><b>Cdr. Amara Okafor</b><span id="dn"></span><span class="sp"></span><span class="badge">● Local demo mode</span><span class="badge d">Demo data</span></header>
 <nav id="rail"></nav><main id="main"></main>
-<footer id="vb"><button id="mic" title="Talk to Nova" aria-label="Talk to Nova">🎙</button><div id="wave"></div>
-<div id="tl"><div id="tt">Nova is ready</div><input id="ti" placeholder="Type to Nova, or press Enter…"><div class="hint">Say "Hey Nova" or tap the mic</div></div>
+<footer id="vb"><button id="mic" title="Talk to ASTRA" aria-label="Talk to ASTRA">🎙</button><div id="wave"></div>
+<div id="tl"><div id="tt">ASTRA is ready</div><input id="ti" placeholder="Type to ASTRA, or press Enter…"><div class="hint">Say "Hey ASTRA" or tap the mic</div></div>
 <button class="f" id="mute">🔊 Voice on</button></footer></div>
 <div class="banner" id="bn"></div><div id="toast"></div>
 <script>
@@ -113,7 +113,7 @@ return{update,setLayer,filter:f=>{o.filter=f;update()},destroy(){cancelAnimation
 
 /* ---------- screens ---------- */
 const SC={};
-const sideHTML=m=>`<div class="card side" style="background:#0e1a33"><div class="row" style="justify-content:space-between"><b style="font-size:20px">${m.name}</b>${stChip(m.level)}</div><p style="margin:6px 0;color:var(--mut)">Affected by: ${m.hazards.join(', ')}</p><h3>${m.label}</h3><div class="val">${m.value} <small>${m.unit}</small></div>${chart(m.series,COL[m.level],60)}<p>${m.text}</p><div class="row"><button class="btn" onclick="ask('Tell me about my ${m.name}')">Ask Nova</button><button class="btn o" onclick="toast('Medical review requested (demo)')">Escalate to medical review</button></div></div>`;
+const sideHTML=m=>`<div class="card side" style="background:#0e1a33"><div class="row" style="justify-content:space-between"><b style="font-size:20px">${m.name}</b>${stChip(m.level)}</div><p style="margin:6px 0;color:var(--mut)">Affected by: ${m.hazards.join(', ')}</p><h3>${m.label}</h3><div class="val">${m.value} <small>${m.unit}</small></div>${chart(m.series,COL[m.level],60)}<p>${m.text}</p><div class="row"><button class="btn" onclick="ask('Tell me about my ${m.name}')">Ask ASTRA</button><button class="btn o" onclick="toast('Medical review requested (demo)')">Escalate to medical review</button></div></div>`;
 SC.home=()=>{const n=S.attention,al=Object.entries(S.modules).filter(([k,m])=>m.chip=='alert').map(([k])=>k);
 return `<div class="grid2"><div class="card row" style="min-height:300px"><div class="orbw"><div class="orb ${speaking?'sp':''}" id="orb"></div></div><div style="flex:1;min-width:220px"><h1>Good morning. Your overall status is stable. ${n?`${n} thing${n>1?'s':''} need${n>1?'':'s'} attention.`:'Nothing needs attention.'}</h1><p style="color:var(--mut)">${al.length?'Needs attention: '+al.join(', ')+'.':''} Ask me anything.</p></div></div>
 <div class="card" style="min-height:300px;padding:6px"><canvas class="b" id="cv"></canvas></div></div>
@@ -123,7 +123,7 @@ SC.body=()=>{const m=S.markers.find(x=>x.id==sel);
 return `<div class="chips" style="margin-top:0">${HZ.map(h=>`<button class="f ${flt==h?'on':''}" onclick="flt='${h}';body.filter('${h}');go('body',1)">${h[0].toUpperCase()+h.slice(1)}</button>`).join('')}<span style="flex:1"></span>${LAY.map(l=>`<button class="f ${layer==l?'on':''}" onclick="body.setLayer('${l}');go('body',1)">${l[0].toUpperCase()+l.slice(1)}</button>`).join('')}</div>
 <div class="card tr" style="padding:6px"><canvas class="b" id="cv"></canvas>${m?sideHTML(m):''}
 <div style="position:absolute;left:16px;bottom:12px;color:var(--mut);font-size:13px">${['normal','watch','warning','critical'].map(l=>`<span style="color:${COL[l]}">${IC[l]} ${LB[l]}</span>`).join(' &nbsp; ')} · drag to rotate, tap a marker</div></div>
-<div class="card" style="margin-top:12px"><div class="row" style="justify-content:space-between"><b>Mission day ${day} of ${S.total}</b><span id="cap" style="color:var(--cy)">“${LOG.filter(x=>x.n).slice(-1)[0]?.t||'Tap a marker or ask Nova about your body.'}”</span></div><input type="range" min="1" max="${S.total}" value="${day}" oninput="loadDay(+this.value)"></div>`};
+<div class="card" style="margin-top:12px"><div class="row" style="justify-content:space-between"><b>Mission day ${day} of ${S.total}</b><span id="cap" style="color:var(--cy)">“${LOG.filter(x=>x.n).slice(-1)[0]?.t||'Tap a marker or ask ASTRA about your body.'}”</span></div><input type="range" min="1" max="${S.total}" value="${day}" oninput="loadDay(+this.value)"></div>`};
 function mod(k){const M=S.modules[k],R=S.rad;let x='';
 if(k=='radiation'){const p=Math.min(1,M.metrics[0].value/R.limit);x=(R.spe?`<div class="card warn">⚠ <b>Space weather alert.</b> ${R.spe_text}</div>`:'')+`<div class="card row"><svg viewBox="0 0 200 115" width="240"><path d="M10 100A90 90 0 0 1 190 100" fill="none" stroke="#0B1426" stroke-width="16" stroke-linecap="round"/><path d="M10 100A90 90 0 0 1 190 100" fill="none" stroke="${p>.75?COL.warning:p>.5?COL.watch:COL.normal}" stroke-width="16" stroke-linecap="round" stroke-dasharray="${p*283} 283"/><text x="100" y="86" text-anchor="middle" fill="#fff" font-size="26" font-weight="700">${Math.round(p*100)}%</text><text x="100" y="108" text-anchor="middle" fill="#8DA2C4" font-size="11">${M.metrics[0].value} of ${R.limit} mSv limit</text></svg><div><h3>Mars transit vs surface</h3>Transit: <b>${M.metrics[1].value} mSv/day</b><br>Surface: <b>${M.metrics[2].value} mSv/day</b></div></div>`}
 if(k=='gravity')x=`<div class="card"><h3>Exercise adherence (last 7 days)</h3><div class="dots">${S.adherence.map(a=>`<i style="background:${a?COL.normal:COL.warning};color:#0B1426">${a?'✓':'✕'}</i>`).join('')}</div><p>${S.adherence.filter(a=>a).length} of 7 sessions done</p></div>`;
@@ -170,19 +170,19 @@ const w=S.markers.find((m,i)=>ORDER(m.level)>ORDER(old.markers[i].level));
 if(body){body.update();body.filter(flt)}if(w){pulse=w.id;const t=`New: your ${w.name.toLowerCase()} is now ${w.level}. ${w.label}: ${w.value} ${w.unit}.`;const b=$('#bn');b.textContent='▲ '+t;b.classList.add('show');setTimeout(()=>{b.classList.remove('show');pulse=null},4500);say(t)}
 const sd=document.querySelector('.side');if(sd&&sel)sd.outerHTML=sideHTML(S.markers.find(x=>x.id==sel));if(screen!='body'&&screen!='home')render()}
 const ORDER=l=>['normal','watch','warning','critical'].indexOf(l);
-function say(t){LOG.push({n:1,t});const tt=$('#tt');tt.textContent='Nova is speaking… '+t;const c=$('#cap');if(c)c.textContent='“'+t+'”';
+function say(t){LOG.push({n:1,t});const tt=$('#tt');tt.textContent='ASTRA is speaking… '+t;const c=$('#cap');if(c)c.textContent='“'+t+'”';
 speaking=true;$('#wave').classList.add('on');document.querySelectorAll('.orb').forEach(o=>o.classList.add('sp'));
-const end=()=>{speaking=false;$('#wave').classList.remove('on');document.querySelectorAll('.orb').forEach(o=>o.classList.remove('sp'));tt.textContent='Nova is ready'};
+const end=()=>{speaking=false;$('#wave').classList.remove('on');document.querySelectorAll('.orb').forEach(o=>o.classList.remove('sp'));tt.textContent='ASTRA is ready'};
 if(!muted&&'speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.onend=end;u.onerror=end;speechSynthesis.speak(u)}else setTimeout(end,Math.min(6000,t.length*45));
 const ch=$('#chat');if(ch){ch.insertAdjacentHTML('beforeend',`<div class="bub">${t}</div>`);ch.scrollTop=1e9}}
-async function ask(text){text=text.replace(/^hey nova[, ]*/i,'');LOG.push({n:0,t:text});const ch=$('#chat');if(ch)ch.insertAdjacentHTML('beforeend',`<div class="bub u">${text}</div>`);
-const r=await (await fetch('/api/nova',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,day})})).json();
+async function ask(text){text=text.replace(/^hey astra[, ]*/i,'');LOG.push({n:0,t:text});const ch=$('#chat');if(ch)ch.insertAdjacentHTML('beforeend',`<div class="bub u">${text}</div>`);
+const r=await (await fetch('/api/astra',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,day})})).json();
 S=await (await fetch('/api/state?day='+day)).json();if(r.select)sel=r.select;if(r.nav&&r.nav!=screen)go(r.nav);else if(r.select)go('body',1);else if(r.nav=='checkin')render();say(r.reply)}
 $('#ti').onkeydown=e=>{if(e.key=='Enter'&&e.target.value.trim()){ask(e.target.value.trim());e.target.value=''}};
 $('#mute').onclick=()=>{muted=!muted;$('#mute').textContent=muted?'🔇 Voice off':'🔊 Voice on';if(muted)speechSynthesis.cancel()};
 $('#wave').innerHTML='<i></i>'.repeat(26);document.querySelectorAll('#wave i').forEach((e,i)=>e.style.animationDelay=(i*.05)+'s');
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec;
-$('#mic').onclick=()=>{if(!SR)return toast('Speech recognition not supported here. Type to Nova instead.');if(rec){rec.stop();return}
+$('#mic').onclick=()=>{if(!SR)return toast('Speech recognition not supported here. Type to ASTRA instead.');if(rec){rec.stop();return}
 rec=new SR();rec.lang='en-US';rec.interimResults=true;$('#mic').classList.add('on');$('#wave').classList.add('on');$('#tt').textContent='Listening…';
 rec.onresult=e=>{const t=[...e.results].map(r=>r[0].transcript).join('');$('#tt').textContent='Listening… '+t;if(e.results[0].isFinal)ask(t)};
 rec.onend=()=>{rec=null;$('#mic').classList.remove('on');if(!speaking)$('#wave').classList.remove('on')};rec.start()};

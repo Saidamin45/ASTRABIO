@@ -1,4 +1,4 @@
-"""ASTRABIO - Flask backend with deterministic demo data and the "Nova" agent."""
+"""ASTRABIO - Flask backend with deterministic demo data and the "ASTRA" agent."""
 import math, os
 from checkin import SPEC, HAZ, LINK, checkin_state, item, log_value, reset as reset_checkin, voice_parse
 from flask import Flask, jsonify, render_template, request
@@ -71,7 +71,7 @@ def state(day=DEFAULT_DAY):
         (140, "CO2 spike in sleep pod 2: 1,150 ppm for 12 min")] if day >= d]
     spe = 138 <= day <= 148
     mods = {
-        "radiation": dict(title="Radiation Guardian", hazard="radiation", ask="Explain my radiation level", askLabel="Ask Nova about radiation",
+        "radiation": dict(title="Radiation Guardian", hazard="radiation", ask="Explain my radiation level", askLabel="Ask ASTRA about radiation",
             metrics=[mk_("Cumulative dose", lambda d: 1.8 * d, "mSv", 300, 450, 550),
                      mk_("Dose rate (transit)", lambda d: 1.8 + .05 * math.sin(d / 3), "mSv/day", 2.5, 4, 6, dp=2),
                      mk_("Dose rate (surface)", lambda d: .67 + .03 * math.sin(d / 5), "mSv/day", 1, 2, 4, dp=2)],
@@ -81,19 +81,19 @@ def state(day=DEFAULT_DAY):
                      mk_("Bone density", lambda d: 100 - .06 * d, "% of baseline", 92, 88, 82, False),
                      mk_("Resting heart rate", lambda d: 58 + .03 * d, "bpm", 65, 72, 85)],
             insight="Muscles and bones need load to stay strong. Resistance sessions are the best way to slow the loss, so consistency matters more than intensity."),
-        "immune": dict(title="Immune Shield", hazard="immune", ask="How is my immune system?", askLabel="Ask Nova about immunity",
+        "immune": dict(title="Immune Shield", hazard="immune", ask="How is my immune system?", askLabel="Ask ASTRA about immunity",
             metrics=[mk_("Inflammation (CRP)", lambda d: 1 + .02 * d, "mg/L", 4, 6, 10),
                      mk_("Lymphocyte count", lambda d: 2.2 - .004 * d, "x10^9/L", 1.5, 1.2, .9, False, dp=2),
                      mk_("Microbiome diversity", lambda d: 4.2 - .008 * d, "index", 3.4, 2.8, 2.2, False, dp=2),
                      mk_("Infection risk", lambda d: 4 + .05 * d, "%", 15, 25, 40)],
             insight="Space stress can make immune cells less alert. A varied diet, sleep and clean air help your defences stay balanced."),
-        "mind": dict(title="MindSpace", hazard="mind", ask="I feel lonely", askLabel="Tell Nova how you feel",
+        "mind": dict(title="MindSpace", hazard="mind", ask="I feel lonely", askLabel="Tell ASTRA how you feel",
             metrics=[mk_("Sleep", lambda d: 7.2 - .012 * d, "h/night", 6.5, 5.5, 4.5, False),
                      mk_("Stress level", lambda d: 30 + .15 * d, "/100", 55, 70, 85),
                      mk_("Mood", lambda d: 7.5 - .01 * d, "/10", 5.5, 4.5, 3.5, False),
                      mk_("Days since live Earth call", lambda d: 3 + (d % 9), "days", 8, 12, 18, dp=0)],
             insight="Long missions can feel isolating. Short, regular check-ins and a steady sleep routine make a big difference."),
-        "habitat": dict(title="Habitat Health", hazard="habitat", ask="How is the habitat air?", askLabel="Ask Nova about the habitat",
+        "habitat": dict(title="Habitat Health", hazard="habitat", ask="How is the habitat air?", askLabel="Ask ASTRA about the habitat",
             metrics=[mk_("CO2", lambda d: 780 + 1.5 * d, "ppm", 1000, 2000, 5000, dp=0),
                      mk_("Oxygen", lambda d: 20.9 - .002 * d, "%", 20, 19.5, 18, False, dp=2),
                      mk_("Temperature", lambda d: 22.4 + .3 * math.sin(d), "C", 25, 28, 32),
@@ -200,8 +200,8 @@ def api_checkin_reset():
     return jsonify(ok=True)
 
 
-@app.route("/api/nova", methods=["POST"])
-def api_nova():
+@app.route("/api/astra", methods=["POST"])
+def api_astra():
     j = request.get_json(force=True)
     out = rule_reply(j.get("text", ""), j.get("day", DEFAULT_DAY))
     if os.getenv("ANTHROPIC_API_KEY"):  # optional LLM brain; falls back to rules offline
@@ -210,7 +210,7 @@ def api_nova():
             st = state(j.get("day", DEFAULT_DAY))
             ctx = {k: dict(level=m["level"], metrics=[(x["label"], x["value"], x["unit"]) for x in m["metrics"]]) for k, m in st["modules"].items()}
             r = anthropic.Anthropic().messages.create(model="claude-sonnet-4-6", max_tokens=250,
-                system="You are Nova, a calm, kind voice assistant for an astronaut on Mars. Reply in 1-3 short spoken sentences, plain language, no medical diagnoses. Demo data: " + str(ctx),
+                system="You are ASTRA, a calm, kind voice assistant for an astronaut on Mars. Reply in 1-3 short spoken sentences, plain language, no medical diagnoses. Demo data: " + str(ctx),
                 messages=[{"role": "user", "content": j.get("text", "")}])
             out["reply"] = r.content[0].text
         except Exception as e:

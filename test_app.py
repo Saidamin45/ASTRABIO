@@ -27,7 +27,7 @@ def test_checkin_levels_and_bodymap():
 def test_typo_guard_and_voice():
     cl = c()
     assert cl.post("/api/checkin", json={"values": {"hr": 7000}}).status_code == 400
-    r = cl.post("/api/nova", json={"text": "my heart rate is 72", "day": 142}).get_json()
+    r = cl.post("/api/astra", json={"text": "my heart rate is 72", "day": 142}).get_json()
     assert r["nav"] == "checkin" and "logged" in r["reply"]
 
 
@@ -36,7 +36,7 @@ def test_streak_and_lonely_safety():
     cl.post("/api/checkin", json={"values": {k: s["base"] for k, s in checkin.SPEC.items()}})
     assert cl.get("/api/state").get_json()["checkin"]["streak"] == 7
     cl.post("/api/checkin", json={"values": {"mood": 3}})
-    assert "flight surgeon" in cl.post("/api/nova", json={"text": "I feel lonely"}).get_json()["reply"]
+    assert "flight surgeon" in cl.post("/api/astra", json={"text": "I feel lonely"}).get_json()["reply"]
 
 
 if __name__ == "__main__":

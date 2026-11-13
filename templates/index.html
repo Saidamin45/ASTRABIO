@@ -6,11 +6,13 @@
 :root{--bg:#0B1426;--card:#15233F;--cy:#22D3EE;--or:#FF7A3D;--rd:#EF4444;--gr:#34D399;--yl:#FACC15;--tx:#fff;--mut:#8DA2C4}
 *{box-sizing:border-box}html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--tx);font:16px/1.4 'Space Grotesk',system-ui,sans-serif;overflow:hidden}
-#app{display:grid;height:100vh;grid-template:"top top" 56px "rail main" 1fr "vb vb" 88px/92px 1fr}
+#app{display:grid;height:100vh;grid-template:"top top" 56px "rail main" 1fr "vb vb" 88px/92px 1fr; transition: grid-template-columns 0.3s ease;}
+#app.collapsed{grid-template-columns: 0px 1fr;}
 #top{grid-area:top;display:flex;align-items:center;gap:14px;padding:0 20px;border-bottom:1px solid #1d3157}
 #top .sp{flex:1}.badge{padding:4px 12px;border-radius:99px;font-size:13px;border:1px solid var(--cy);color:var(--cy)}
 .badge.d{border-color:var(--yl);color:var(--yl)}
-#rail{grid-area:rail;display:flex;flex-direction:column;gap:6px;padding:10px 8px;border-right:1px solid #1d3157;overflow:auto}
+#rail{grid-area:rail;display:flex;flex-direction:column;gap:6px;padding:10px 8px;border-right:1px solid #1d3157;overflow:auto; white-space: nowrap; transition: padding 0.3s ease, opacity 0.3s ease;}
+#app.collapsed #rail{padding: 10px 0; opacity: 0; pointer-events: none;}
 #rail button{background:none;border:0;color:var(--mut);padding:8px 2px;border-radius:14px;font:inherit;font-size:11px;cursor:pointer;min-height:56px}
 #rail button i{display:block;font-style:normal;font-size:22px}
 #rail button.on{background:var(--card);color:var(--cy);box-shadow:0 0 14px #22D3EE55}
@@ -50,13 +52,17 @@ input[type=range]{width:100%;accent-color:var(--cy);height:36px}
 .bar{height:14px;border-radius:9px;background:#0B1426;overflow:hidden}.bar b{display:block;height:100%}
 .ev{padding:3px 10px;border-radius:99px;font-size:12px;border:1px solid var(--cy);color:var(--cy)}
 #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--cy);color:var(--bg);padding:10px 20px;border-radius:99px;opacity:0;transition:.3s;z-index:9}
+#hamburger{background:none;border:0;color:var(--cy);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px;}
+#hamburger:hover{background:var(--card)}
 @media(max-width:900px){.grid2,.mgrid{grid-template-columns:1fr}.side{position:static;width:auto}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 button:focus-visible,input:focus-visible{outline:2px solid var(--yl);outline-offset:2px}
 .ti{display:block;width:100%;margin-top:4px;background:#0B1426;border:1px solid #2b4274;border-radius:12px;color:#fff;padding:8px 12px;font:inherit}label{color:var(--mut);font-size:14px}
 </style></head><body>
 <div id="app">
-<header id="top"><b style="color:var(--cy);letter-spacing:2px">ASTRABIO</b><b>Cdr. Amara Okafor</b><span id="dn"></span><span class="sp"></span><span class="badge">● Local demo mode</span><span class="badge d">Demo data</span></header>
+<header id="top">
+<button id="hamburger" title="Toggle Sidebar" aria-label="Toggle Sidebar">☰</button>
+<b style="color:var(--cy);letter-spacing:2px">ASTRABIO</b><b>Cdr. Amara Okafor</b><span id="dn"></span><span class="sp"></span><span class="badge">● Local demo mode</span><span class="badge d">Demo data</span></header>
 <nav id="rail"></nav><main id="main"></main>
 <footer id="vb"><button id="mic" title="Talk to Nova" aria-label="Talk to Nova">🎙</button><div id="wave"></div>
 <div id="tl"><div id="tt">Nova is ready</div><input id="ti" placeholder="Type to Nova, or press Enter…"><div class="hint">Say "Hey Nova" or tap the mic</div></div>
@@ -180,9 +186,13 @@ $('#mic').onclick=()=>{if(!SR)return toast('Speech recognition not supported her
 rec=new SR();rec.lang='en-US';rec.interimResults=true;$('#mic').classList.add('on');$('#wave').classList.add('on');$('#tt').textContent='Listening…';
 rec.onresult=e=>{const t=[...e.results].map(r=>r[0].transcript).join('');$('#tt').textContent='Listening… '+t;if(e.results[0].isFinal)ask(t)};
 rec.onend=()=>{rec=null;$('#mic').classList.remove('on');if(!speaking)$('#wave').classList.remove('on')};rec.start()};
+
+// Hamburger Toggle Logic
+$('#hamburger').onclick = () => {
+  $('#app').classList.toggle('collapsed');
+  // Trigger a resize event to make sure Three.js canvas dynamically scales nicely
+  window.dispatchEvent(new Event('resize'));
+};
+
 fetch('/api/state?day='+day).then(r=>r.json()).then(s=>{S=s;render()});
 </script></body></html>
-
-
-
-

@@ -13,7 +13,7 @@ Voice-first astronaut health self-assessment for long missions. NASA Space Apps 
 - Set `ANTHROPIC_API_KEY` to let an LLM write ASTRA's replies. Without it, built-in rules are used.
 
 ## Important
-All values are demo data and all health ranges are **placeholders** (see `checkin.py`). The app gives guidance only, not diagnosis. Read **GAPS.md** for what is missing and how to solve it.
+All values are demo data and all health ranges are **placeholders** (see `checkin.py`). The app gives guidance only, not diagnosis.
 
 ## Files
 - `app.py` Flask backend and ASTRA rules
